@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ueransim-phone
+  labels:
+    app.kubernetes.io/name: ueransim-phone
+spec:
+  type: ClusterIP
+  selector:
+    app: ueransim
+    component: ue
+  ports:
+    - name: http
+      port: 80
+      targetPort: phone-http
+      protocol: TCP

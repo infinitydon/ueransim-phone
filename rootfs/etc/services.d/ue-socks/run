@@ -1,0 +1,58 @@
+#!/bin/sh
+set -eu
+
+pattern="${UE_TUN_PATTERN:-uesimtun*}"
+wait_seconds="${UE_TUN_WAIT_SECONDS:-300}"
+elapsed=0
+
+echo "[ue-socks] waiting for a UERANSIM tunnel matching ${pattern}"
+
+while :; do
+    iface="$(
+        ip -o -4 addr show 2>/dev/null |
+        awk -v pattern="$pattern" '
+            BEGIN {
+                regex = pattern
+                gsub(/\*/, ".*", regex)
+                gsub(/\?/, ".", regex)
+            }
+            $2 ~ ("^" regex "$") { print $2; exit }
+        '
+    )"
+
+    if [ -n "${iface}" ]; then
+        break
+    fi
+
+    if [ "$elapsed" -ge "$wait_seconds" ]; then
+        echo "[ue-socks] no matching tunnel after ${wait_seconds}s; continuing to wait"
+        elapsed=0
+    fi
+
+    sleep 1
+    elapsed=$((elapsed + 1))
+done
+
+ue_ip="$(ip -o -4 addr show dev "$iface" | awk 'NR == 1 { split($4, a, "/"); print a[1] }')"
+
+cat >/tmp/sockd.conf <<EOF
+logoutput: stderr
+internal: 127.0.0.1 port = 1080
+external: ${iface}
+socksmethod: none
+clientmethod: none
+user.privileged: root
+user.unprivileged: nobody
+
+client pass {
+    from: 127.0.0.1/32 to: 0.0.0.0/0
+}
+
+socks pass {
+    from: 127.0.0.1/32 to: 0.0.0.0/0
+    command: connect bind udpassociate
+}
+EOF
+
+echo "[ue-socks] routing Firefox via ${iface} (${ue_ip})"
+exec sockd -f /tmp/sockd.conf

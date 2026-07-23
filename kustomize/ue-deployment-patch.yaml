@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: free5gc-zebra-ueransim-ue
+spec:
+  template:
+    spec:
+      containers:
+        - name: phone
+          image: ghcr.io/infinitydon/ueransim-phone:v0.1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: UE_TUN_PATTERN
+              value: "uesimtun*"
+            - name: FF_OPEN_URL
+              value: "https://example.com"
+            - name: DISPLAY_WIDTH
+              value: "390"
+            - name: DISPLAY_HEIGHT
+              value: "844"
+          ports:
+            - name: phone-http
+              containerPort: 5800
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: phone-http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
