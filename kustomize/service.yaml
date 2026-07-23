@@ -10,7 +10,7 @@ spec:
     app: ueransim
     component: ue
   ports:
-    - name: http
-      port: 80
-      targetPort: phone-http
+    - name: https
+      port: 443
+      targetPort: phone-https
       protocol: TCP

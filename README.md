@@ -30,10 +30,10 @@ sidecars and then adds the current pair without changing the UE container.
 
 ```sh
 ./scripts/install.sh free5gc-zebra-test free5gc-zebra-ueransim-ue
-kubectl -n free5gc-zebra-test port-forward service/ueransim-phone 5800:80
+kubectl -n free5gc-zebra-test port-forward service/ueransim-phone 5843:443
 ```
 
-Open `http://127.0.0.1:5800`. Chromium is rendered at a 390 by 844 mobile
+Open `https://127.0.0.1:5843`. Chromium is rendered at a 390 by 844 mobile
 viewport and uses a mobile user agent.
 
 ## Important behavior

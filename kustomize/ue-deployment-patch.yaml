@@ -58,10 +58,14 @@ spec:
             - name: phone-http
               containerPort: 3000
               protocol: TCP
+            - name: phone-https
+              containerPort: 3001
+              protocol: TCP
           readinessProbe:
             httpGet:
               path: /
-              port: phone-http
+              port: phone-https
+              scheme: HTTPS
             initialDelaySeconds: 15
             periodSeconds: 10
           resources:
