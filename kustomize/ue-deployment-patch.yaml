@@ -31,7 +31,7 @@ spec:
             - name: TITLE
               value: "UERANSIM Phone"
             - name: CHROME_CLI
-              value: "--kiosk --proxy-server=socks5://127.0.0.1:1080 --host-resolver-rules=MAP * ~NOTFOUND,EXCLUDE localhost https://example.com"
+              value: "--kiosk --proxy-server=socks5://127.0.0.1:1080 https://example.com"
             - name: SELKIES_MANUAL_WIDTH
               value: "390"
             - name: SELKIES_MANUAL_HEIGHT
