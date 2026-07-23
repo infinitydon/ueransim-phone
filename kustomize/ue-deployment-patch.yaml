@@ -6,28 +6,64 @@ spec:
   template:
     spec:
       containers:
-        - name: phone
-          image: ghcr.io/infinitydon/ueransim-phone:v0.1.0
+        - name: phone-proxy
+          image: ghcr.io/infinitydon/ueransim-phone:v0.2.1
           imagePullPolicy: IfNotPresent
           env:
             - name: UE_TUN_PATTERN
               value: "uesimtun*"
-            - name: FF_OPEN_URL
-              value: "https://example.com"
-            - name: DISPLAY_WIDTH
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+        - name: phone
+          image: lscr.io/linuxserver/chromium:bf9e0b4f-ls46
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TITLE
+              value: "UERANSIM Phone"
+            - name: CHROME_CLI
+              value: "--kiosk --proxy-server=socks5://127.0.0.1:1080 --host-resolver-rules=MAP * ~NOTFOUND,EXCLUDE localhost https://example.com"
+            - name: SELKIES_MANUAL_WIDTH
               value: "390"
-            - name: DISPLAY_HEIGHT
+            - name: SELKIES_MANUAL_HEIGHT
               value: "844"
+            - name: MAX_RES
+              value: "390x844"
+            - name: NO_DECOR
+              value: "true"
+            - name: HARDEN_DESKTOP
+              value: "true"
+            - name: HARDEN_OPENBOX
+              value: "true"
+            - name: DISABLE_IPV6
+              value: "true"
+            - name: SELKIES_UI_TITLE
+              value: "UERANSIM Phone"
+            - name: SELKIES_UI_SHOW_LOGO
+              value: "false|locked"
+            - name: SELKIES_UI_SIDEBAR_SHOW_FILES
+              value: "false|locked"
+            - name: SELKIES_UI_SIDEBAR_SHOW_APPS
+              value: "false|locked"
           ports:
             - name: phone-http
-              containerPort: 5800
+              containerPort: 3000
               protocol: TCP
           readinessProbe:
             httpGet:
               path: /
               port: phone-http
-            initialDelaySeconds: 5
-            periodSeconds: 5
+            initialDelaySeconds: 15
+            periodSeconds: 10
           resources:
             requests:
               cpu: 100m
@@ -35,8 +71,3 @@ spec:
             limits:
               cpu: "1"
               memory: 1Gi
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL

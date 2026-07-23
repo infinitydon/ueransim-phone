@@ -11,24 +11,15 @@ while :; do
     iface="$(
         ip -o -4 addr show 2>/dev/null |
         awk -v pattern="$pattern" '
-            BEGIN {
-                regex = pattern
-                gsub(/\*/, ".*", regex)
-                gsub(/\?/, ".", regex)
-            }
+            BEGIN { regex = pattern; gsub(/\*/, ".*", regex); gsub(/\?/, ".", regex) }
             $2 ~ ("^" regex "$") { print $2; exit }
         '
     )"
-
-    if [ -n "${iface}" ]; then
-        break
-    fi
-
+    [ -n "${iface}" ] && break
     if [ "$elapsed" -ge "$wait_seconds" ]; then
         echo "[ue-socks] no matching tunnel after ${wait_seconds}s; continuing to wait"
         elapsed=0
     fi
-
     sleep 1
     elapsed=$((elapsed + 1))
 done
@@ -43,16 +34,12 @@ socksmethod: none
 clientmethod: none
 user.privileged: root
 user.unprivileged: nobody
-
-client pass {
-    from: 127.0.0.1/32 to: 0.0.0.0/0
-}
-
+client pass { from: 127.0.0.1/32 to: 0.0.0.0/0 }
 socks pass {
     from: 127.0.0.1/32 to: 0.0.0.0/0
     command: connect bind udpassociate
 }
 EOF
 
-echo "[ue-socks] routing Firefox via ${iface} (${ue_ip})"
+echo "[ue-socks] routing Chromium via ${iface} (${ue_ip})"
 exec sockd -f /tmp/sockd.conf

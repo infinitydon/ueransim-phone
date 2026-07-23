@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: free5gc-zebra-ueransim-ue
+spec:
+  template:
+    spec:
+      containers:
+        - name: phone
+          $patch: delete
+        - name: phone-proxy
+          $patch: delete
