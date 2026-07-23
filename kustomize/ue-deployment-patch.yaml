@@ -31,15 +31,17 @@ spec:
             - name: TITLE
               value: "UERANSIM Phone"
             - name: CHROME_CLI
-              value: "--kiosk --proxy-server=socks5://127.0.0.1:1080 https://example.com"
+              value: "--start-maximized --force-device-scale-factor=1 --proxy-server=socks5://127.0.0.1:1080 https://example.com"
             - name: SELKIES_MANUAL_WIDTH
               value: "390"
             - name: SELKIES_MANUAL_HEIGHT
               value: "844"
+            - name: SELKIES_SCALING_DPI
+              value: "96"
+            - name: SELKIES_USE_CSS_SCALING
+              value: "true|locked"
             - name: MAX_RES
               value: "390x844"
-            - name: NO_DECOR
-              value: "true"
             - name: HARDEN_DESKTOP
               value: "true"
             - name: HARDEN_OPENBOX
@@ -49,6 +51,8 @@ spec:
             - name: SELKIES_UI_TITLE
               value: "UERANSIM Phone"
             - name: SELKIES_UI_SHOW_LOGO
+              value: "false|locked"
+            - name: SELKIES_UI_SHOW_SIDEBAR
               value: "false|locked"
             - name: SELKIES_UI_SIDEBAR_SHOW_FILES
               value: "false|locked"

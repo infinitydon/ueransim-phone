@@ -34,7 +34,7 @@ kubectl -n free5gc-zebra-test port-forward service/ueransim-phone 5843:443
 ```
 
 Open `https://127.0.0.1:5843`. Chromium is rendered at a 390 by 844 mobile
-viewport and uses a mobile user agent.
+viewport with visible URL/navigation controls and uses a mobile user agent.
 
 ## Important behavior
 
